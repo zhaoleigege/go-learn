@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -38,6 +39,16 @@ func router() *mux.Router {
 	r.HandleFunc("/post", simplePost).Methods(http.MethodPost)
 	r.HandleFunc("/form", simpleForm).Methods(http.MethodPost)
 	r.HandleFunc("/person/{name}", simpleVarRouter).Methods(http.MethodGet)
+
+	dir, err := os.UserHomeDir()
+	if err != nil {
+		dir = fmt.Sprintf("%s/mux", "/var")
+	} else {
+		dir = fmt.Sprintf("%s/Desktop/mux", dir)
+	}
+	log.Printf("文件存储目录为：%s\n", dir)
+
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(dir))))
 
 	rSub := r.PathPrefix("/sub").Subrouter()
 	{
