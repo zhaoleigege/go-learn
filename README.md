@@ -12,7 +12,7 @@
    go test -v -run 'TestSimpleGet'
    ```
 
-3. 便携Dockerfile文件
+3. 编写Dockerfile文件
 
    1. 创建名字为`Dockerfile`的文件在项目中
 
@@ -42,7 +42,7 @@
    4. 运行
 
       ```shell
-      docker run -p 8000:8000 --name mux --rm mux
+      docker run -d -p 8000:8000 --name mux --rm mux
       ```
 
 4. 开发规范
