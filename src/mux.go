@@ -12,8 +12,7 @@ import (
 )
 
 var (
-	hostname string
-	port     int
+	port int
 )
 
 type ResEntity struct {
@@ -28,7 +27,6 @@ type Person struct {
 }
 
 func init() {
-	flag.StringVar(&hostname, "hostname", "127.0.0.1", "主机域名")
 	flag.IntVar(&port, "port", 8000, "端口号")
 }
 
@@ -61,7 +59,7 @@ func router() *mux.Router {
 
 func main() {
 	flag.Parse()
-	address := fmt.Sprintf("%s:%d", hostname, port)
+	address := fmt.Sprintf(":%d", port)
 	log.Printf("服务器启动%s\n", address)
 
 	if err := http.ListenAndServe(address, router()); err != nil {
