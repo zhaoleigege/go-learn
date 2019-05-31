@@ -49,5 +49,33 @@
 
    * 传递结构体时，都传递指针过去
 
+5. docker下载mysql镜像并启动
+
+   ```shell
+   docker run --name mysql -p 3306:3306  -v /Users/...:/var/lib/mysql -e MYSQL_ROOT_PASSWORD="root" -d mysql
+   ```
+
+   进入容器创建一个新的数据库
+
+   ```shell
+   docker exec -it mysql sh # 进入mysql容器
+   mysql -u root -p'root' # 进入mysql shell
+   
+   CREATE DATABASE sqlx; # 创建名为sqlx的数据库
+   quit # 退出mysql命令行
+   ```
+
+6. 下载sql开发相关的包
+
+   ```shell
+   go get github.com/jmoiron/sqlx
+   get github.com/go-sql-driver/mysql
+   ```
+
    
 
+
+
+#### 参考资料
+
+* [sqlx参考资料](https://github.com/jmoiron/sqlx)
