@@ -6,7 +6,8 @@ import (
 )
 
 func main() {
-	testCaller()
+	//testCaller()
+	runtimeStack()
 }
 
 func testCaller() {
@@ -55,4 +56,11 @@ func callersFramesTrace() {
 
 		fmt.Printf(" %s:%d %s\n", frame.File, frame.Line, frame.Function)
 	}
+}
+
+func runtimeStack() {
+	buf := make([]byte, 2048)
+	n := runtime.Stack(buf, false)
+	fmt.Printf("n: %d\n", n)
+	fmt.Printf("buf: %+v\n", string(buf[:n]))
 }
