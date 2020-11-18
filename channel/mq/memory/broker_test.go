@@ -5,12 +5,20 @@ import (
 	"github.com/zhaoleigege/mq"
 	"sync"
 	"testing"
+	"time"
 )
 
+// go test -cpu=1,9,55,99 -race -count=1000 -failfast
+// 使用竞态测试
+// cpu指定GOMAXPROCS数量为1 9 55 99
+// -race指定每次跑测试时都使用不同的cpu数量
+// count指定测试的次数
+// failfast指定一旦出错就立马停止
 func TestBroker(t *testing.T) {
 	broker := NewMemoryBroker()
 	wg := &sync.WaitGroup{}
 
+	// 这里可能存在生产者已经生产完消息但是消费者还没有创建的情况
 	wg.Add(1)
 	go producer(wg, broker)
 
@@ -34,7 +42,7 @@ func producer(wg *sync.WaitGroup, broker mq.Broker) {
 		ErrChan: errChan,
 	}
 
-	if err := <-errChan; err != nil{
+	if err := <-errChan; err != nil {
 		panic("生产者错误")
 	}
 
@@ -45,7 +53,18 @@ func consumer(wg *sync.WaitGroup, broker mq.Broker) {
 	defer wg.Done()
 
 	receiveChan := broker.Subscribe("test")
-	data := <-receiveChan
+	var data mq.ReceiveEnvelop
 
-	fmt.Printf("消费者收到:%s\n", string(data.Body()))
+	timer := time.NewTimer(1 * time.Second)
+	select {
+	case <-timer.C:
+	case data = <-receiveChan:
+	}
+
+	if data == nil {
+		fmt.Printf("消费者没有收到数据\n")
+	} else {
+		fmt.Printf("消费者收到:%s\n", string(data.Body()))
+
+	}
 }
